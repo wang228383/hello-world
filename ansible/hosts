@@ -1,0 +1,17 @@
+#other node instal plugin
+[k8s]
+
+172.17.13.188
+
+#master create
+[k8s_master_first]
+
+172.17.13.188
+
+#other master join cluster
+[k8s_master_second]
+
+172.17.13.188
+
+#work nodes join cluster
+[k8s_node]

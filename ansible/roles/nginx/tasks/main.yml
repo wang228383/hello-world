@@ -1,0 +1,29 @@
+---
+########Selinux Firewalld Disable########
+- name: Selinux dsiable
+  lineinfile:
+    dest: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: 'SELINUX=disabled'
+- name: Selinux stop
+  selinux: state=disabled
+- name: Firewalld disable
+  service: name=firewalld state=stopped enabled=no
+
+######## nginx install ##################
+- name: install nginx
+  yum:
+    name: 
+      - nginx
+      - epel-release
+    state: latest
+- name: 启动 nginx 服务
+  service: 
+    name: nginx 
+    state: restarted 
+    enabled: yes
+- name: copy nginx configuration file
+  template: 
+    src: k8s.conf 
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx 

@@ -1,0 +1,17 @@
+---
+
+
+- name: master节点加入集群
+  shell: '{{ join_cluster }}'
+  
+- name: kubectl 配置文件复制
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+
+- name: s.1查看节点信息
+  shell: 'kubectl get nodes'
+  register: check
+
+- name: s.2查看节点信息
+  debug: var=check.stdout verbosity=0

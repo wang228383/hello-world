@@ -1,0 +1,7 @@
+---
+- name: Node节点加入集群
+  shell: '{{ join_cluster }}'
+  register: check 
+
+- name: 查看加入信息
+  debug: var=check.stdout verbosity=0 

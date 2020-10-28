@@ -1,0 +1,2 @@
+KUBELETEXTRAARGS="--fail-swa-on=false"
+KUBEPROXYMODE=ipvs

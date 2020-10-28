@@ -1,0 +1,18 @@
+---
+- name: 检出命令
+  debug: var=join_cluster.stdout verbosity=0    #check.stdout 显示出的信息会看的更清晰点
+
+- name: Master节点加入集群
+  shell: '{{ join_cluster }}'
+
+- name: Kubectl 配置文件复制
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+
+- name: s.1查看节点信息
+  shell: 'kubectl get nodes'
+  register: check
+
+- name: s.2查看节点信息
+  debug: var=check.stdout verbosity=0

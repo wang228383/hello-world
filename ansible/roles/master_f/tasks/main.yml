@@ -1,0 +1,20 @@
+---
+- name: 生成集群
+  shell: kubeadm init --config /root/kubeadm-config.yaml
+  register: check
+
+- name: 检出集群生成信息
+  debug: var=check.stdout verbosity=0 
+
+- name: kubectl 配置文件复制
+  copy:
+    src: /etc/kubernetes/admin.conf 
+    dest: /root/.kube/config
+
+- name: Flannel网络插件
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml warn=False
+  ignore_errors: yes
+
+- name: 保存 Join Cluster信息
+  shell: 'echo `kubeadm token create --print-join-command` --control-plane'
+  register: join_cluster 

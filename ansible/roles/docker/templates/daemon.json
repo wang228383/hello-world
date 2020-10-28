@@ -1,0 +1,10 @@
+{ 
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "insecure-registries": [{{ harbor }}],
+	"graph": "/data/docker",
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "256m",
+		"max-file": "3"
+	}	
+}
