@@ -26,6 +26,21 @@
         join_cluster: 'echo `kubeadm token create --print-join-command` --control-plane'
 
 - hosts: k8s_master_second
+  pre_tasks:
+    - name: 复制ca 证书到 其他master节点
+      copy:
+        src: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+      with_items:
+        - { src: '/etc/kubernetes/pki/ca.key',dest: '/etc/kubernetes/pki/ca.key'}
+        - { src: '/etc/kubernetes/pki/ca.crt',dest: '/etc/kubernetes/pki/ca.crt'}
+        - { src: '/etc/kubernetes/pki/sa.key',dest: '/etc/kubernetes/pki/sa.key'}
+        - { src: '/etc/kubernetes/pki/sa.pub',dest: '/etc/kubernetes/pki/sa.pub'}
+        - { src: '/etc/kubernetes/pki/front-proxy-ca.crt',dest: '/etc/kubernetes/pki/front-proxy-ca.crt'}
+        - { src: '/etc/kubernetes/pki/front-proxy-ca.key',dest: '/etc/kubernetes/pki/front-proxy-ca.key'}
+        - { src: '/etc/kubernetes/pki/etcd/ca.crt',dest: '/etc/kubernetes/pki/etcd/ca.crt'}
+        - { src: '/etc/kubernetes/pki/etcd/ca.key',dest: '/etc/kubernetes/pki/etcd/ca.key'}
+        - { src: '/etc/kubernetes/admin.conf',dest: '/etc/kubernetes/admin.conf'}
   roles:
     - role: master_s
 
