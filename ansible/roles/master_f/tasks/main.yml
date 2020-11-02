@@ -20,7 +20,7 @@
   register: join_cluster
   
   
- - name: 保存 Join Cluster信息 S
+- name: 保存 Join Cluster信息 S
   shell: 'echo `kubeadm token create --print-join-command`'
   register: join_cluster_node
 
