@@ -1,6 +1,6 @@
 ---
 - name: Node节点加入集群
-  shell: '{{ join_cluster_node }}'
+  command: "{{ hostvars[groups.k8s_node]['kubernetes_join_token'] }}"
   register: check 
 
 - name: 查看加入信息

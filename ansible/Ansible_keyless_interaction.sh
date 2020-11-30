@@ -4,7 +4,7 @@
 #Notice: Ansible keyless interaction
 IP=`cat /etc/ansible/hosts | grep -Ev "#|$^" | grep -vE "[a-z]"`
 #输入服务器密码
-password="Sxxxx"
+password="Syswin#123"
 
 yum nstall sshpass ansible -y
 

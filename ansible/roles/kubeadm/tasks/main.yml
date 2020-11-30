@@ -11,21 +11,15 @@
     state: present
 
 - name: 安装 Kubernetes 组件
-  yum: name="{{item}}" state=present
-  with_items:
+  yum: name='{{item}}' state=present
+  loop:
     - "kubelet-{{version}}"
     - "kubectl-{{version}}"
     - "kubeadm-{{version}}"
 
-- name: cp kubelet1 file
-  copy:
-    src: "files/kubelet"
-    dest: "{{ kubelet_config_path }}/kubelet"
-
-- name: cp kubelet2 file
-  copy:
-    src: "files/10-kubeadm.conf"
-    dest: "/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
+- block:
+  - copy: src="files/kubelet" dest="{{ kubelet_config_path }}/kubelet"
+  - copy: src="files/10-kubeadm.conf" dest="/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
 
 - name: Create kubeadm-config Directory
   file:
@@ -40,10 +34,12 @@
 - name: 重载参数
   shell: sysctl --system warn=False
 
-- name: 初始化kubeadm
-  shell: kubeadm reset -f && systemctl enable kubelet.service warn=False
-
 - name: 生成配置文件
   template:
     src: kubeadm-config.yaml
     dest: "/root/kubeadm-config.yaml"
+
+- block: 
+  - name: Dir Create
+    file: path='/etc/kubernetes/pki/etcd' state=directory
+  - shell: "iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X"

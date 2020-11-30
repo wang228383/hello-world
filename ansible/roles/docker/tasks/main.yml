@@ -1,20 +1,13 @@
 ---
-- name: 更新YUM源
-  shell: wget -O /etc/yum.repos.d/docker-ce.repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo warn=False
+- block:
+  - shell: wget -O /etc/yum.repos.d/docker-ce.repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo warn=False
+  - yum: name={{ item }} state=present
+    loop:
+      - docker-ce
+  - service: name=docker.service enabled=yes state=started
 
-- name: 安装docker-CE
-  yum: 
-    name: docker-ce 
-    state: present
-
-- name: docker启动
-  service: 
-    name: docker.service 
-    enabled: yes 
-    state: started
-
-- name: 加载docker配置文件
-  template:
-    src: "daemon.json"
-    dest: "{{ docker_config_path }}/daemon.json"
-  notify: restart docker
+  - name: COPY DAEMON.JSON
+    template: 
+      src: "daemon.json" 
+      dest: "{{ docker_config_path }}/daemon.json"
+    notify: restart docker

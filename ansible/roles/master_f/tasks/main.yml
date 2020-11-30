@@ -16,11 +16,38 @@
   ignore_errors: yes
 
 - name: 保存 Join Cluster信息 M
-  shell: 'echo `kubeadm token create --print-join-command` --control-plane'
-  register: join_cluster
+  shell: 'kubeadm token create --print-join-command'
+  register: kubernetes_join_token
   
+- name: Set facts Master
+  set_fact: kubernetes_join_token={{ kubernetes_join_token.stdout.replace('To add a node to this kubernetes, run the following command:\n\n    ', '').replace('\\\n','') }}
   
-- name: 保存 Join Cluster信息 S
-  shell: 'echo `kubeadm token create --print-join-command`'
-  register: join_cluster_node
+- name: Echo Kubernetes_join_token
+  debug: msg={{ kubernetes_join_token }}
+
+- block:
+  - name: CPOY FILE
+    debug: msg="证书COPY"
+  - shell: "scp '{{ item.src }}' {{ groups['k8s_master_second'][0] }}:/{{ item.dest }}"
+    with_items:
+      - { src: '/etc/kubernetes/pki/ca.key',dest: '/etc/kubernetes/pki/ca.key'}
+      - { src: '/etc/kubernetes/pki/ca.crt',dest: '/etc/kubernetes/pki/ca.crt'}
+      - { src: '/etc/kubernetes/pki/sa.key',dest: '/etc/kubernetes/pki/sa.key'}
+      - { src: '/etc/kubernetes/pki/sa.pub',dest: '/etc/kubernetes/pki/sa.pub'}
+      - { src: '/etc/kubernetes/pki/front-proxy-ca.crt',dest: '/etc/kubernetes/pki/front-proxy-ca.crt'}
+      - { src: '/etc/kubernetes/pki/front-proxy-ca.key',dest: '/etc/kubernetes/pki/front-proxy-ca.key'}
+      - { src: '/etc/kubernetes/pki/etcd/ca.crt',dest: '/etc/kubernetes/pki/etcd/ca.crt'}
+      - { src: '/etc/kubernetes/pki/etcd/ca.key',dest: '/etc/kubernetes/pki/etcd/ca.key'}
+      - { src: '/etc/kubernetes/admin.conf',dest: '/etc/kubernetes/admin.conf'}
+  - shell: "scp '{{ item.src }}' {{ groups['k8s_master_second'][1] }}:/{{ item.dest }}"
+    with_items:
+      - { src: '/etc/kubernetes/pki/ca.key',dest: '/etc/kubernetes/pki/ca.key'}
+      - { src: '/etc/kubernetes/pki/ca.crt',dest: '/etc/kubernetes/pki/ca.crt'}
+      - { src: '/etc/kubernetes/pki/sa.key',dest: '/etc/kubernetes/pki/sa.key'}
+      - { src: '/etc/kubernetes/pki/sa.pub',dest: '/etc/kubernetes/pki/sa.pub'}
+      - { src: '/etc/kubernetes/pki/front-proxy-ca.crt',dest: '/etc/kubernetes/pki/front-proxy-ca.crt'}
+      - { src: '/etc/kubernetes/pki/front-proxy-ca.key',dest: '/etc/kubernetes/pki/front-proxy-ca.key'}
+      - { src: '/etc/kubernetes/pki/etcd/ca.crt',dest: '/etc/kubernetes/pki/etcd/ca.crt'}
+      - { src: '/etc/kubernetes/pki/etcd/ca.key',dest: '/etc/kubernetes/pki/etcd/ca.key'}
+      - { src: '/etc/kubernetes/admin.conf',dest: '/etc/kubernetes/admin.conf'}
 

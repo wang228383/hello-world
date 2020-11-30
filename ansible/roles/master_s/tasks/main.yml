@@ -1,18 +1,16 @@
 ---
-- name: 检出命令
-  debug: var=join_cluster.stdout verbosity=0    #check.stdout 显示出的信息会看的更清晰点
+  - name: 加入kubernetes 集群
+    command: "{{ hostvars[groups.k8s_master_first[0]]['kubernetes_join_token'] }} --control-plane"
+    ignore_errors: true
 
-- name: Master节点加入集群
-  shell: '{{ join_cluster }}'
+  - block:
+    - file: "path=/root/.kube state=directory"
+    - name: 权限认证
+      copy: src=/etc/kubernetes/admin.conf dest=/root/.kube/config
 
-- name: Kubectl 配置文件复制
-  file:
-    src: /etc/kubernetes/admin.conf
-    dest: /root/.kube/config
+  - name: s.1查看节点信息
+    shell: 'kubectl get nodes'
+    register: check
 
-- name: s.1查看节点信息
-  shell: 'kubectl get nodes'
-  register: check
-
-- name: s.2查看节点信息
-  debug: var=check.stdout verbosity=0
+  - name: s.2查看节点信息
+    debug: var=check.stdout verbosity=0

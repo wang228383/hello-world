@@ -1,14 +1,25 @@
 #other node instal plugin
 [k8s]
+192.168.0.1
+192.168.0.2
+192.168.0.3
 
+[master]
 
 #master create
 [k8s_master_first]
-
+192.168.0.1
 
 #other master join cluster
 [k8s_master_second]
-
+192.168.0.2
+192.168.0.3
 
 #work nodes join cluster
 [k8s_node]
+192.168.0.4
+192.168.0.5
+192.168.0.6
+192.168.0.7
+
+
