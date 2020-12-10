@@ -16,10 +16,16 @@
     - "kubelet-{{version}}"
     - "kubectl-{{version}}"
     - "kubeadm-{{version}}"
+  
 
 - block:
   - copy: src="files/kubelet" dest="{{ kubelet_config_path }}/kubelet"
   - copy: src="files/10-kubeadm.conf" dest="/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
+  - shell: kubeadm reset -f 
+  - service: enable=true name={{ item  }}
+    loop:
+      - kubelet
+      - nginx
 
 - name: Create kubeadm-config Directory
   file:
